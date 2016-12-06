@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.rest</groupId>
+    <artifactId>rest-service</artifactId>
+    <packaging>pom</packaging>
+    <version>${project.rest.version}</version>
+    <modules>
+        <module>rest-resteasy-netty4</module>
+        <module>rest-security</module>
+        <module>rest-service-codec</module>
+        <module>rest-service-utils</module>
+        <module>rest-security-simple</module>
+        <module>rest-service-demo</module>
+        <module>rest-service-main</module>
+    </modules>
+    <properties>
+        <project.rest.version>1.1</project.rest.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>1.8</java.version>
+        <org.springframework.version>4.2.4.RELEASE</org.springframework.version>
+
+        <resteasy.version>3.0.19.Final</resteasy.version>
+        <netty.version>4.1.6.Final</netty.version>
+        <mockito.version>1.9.5</mockito.version>
+        <org.aspectj-version>1.8.8</org.aspectj-version>
+        <org.slf4j.version>1.7.15</org.slf4j.version>
+
+        <org.log4j2.version>2.5</org.log4j2.version>
+        <javassist.version>3.20.0-GA</javassist.version>
+
+        <shiro.version>1.2.4</shiro.version>
+        <commons-lang3.version>3.4</commons-lang3.version>
+        <guava.version>18.0</guava.version>
+        <orika.version>1.4.6</orika.version>
+        <commons-codec.version>1.10</commons-codec.version>
+        <jackson.version>2.6.4</jackson.version>
+
+        <druid.version>1.0.16</druid.version>
+        <jsonwebtoken.version>0.6.0</jsonwebtoken.version>
+
+        <dubbo.version>2.8.5</dubbo.version>
+        <zookeeper.version>3.4.8</zookeeper.version>
+        <zkclient.version>0.7</zkclient.version>
+        <java.core.version>2.0.0</java.core.version>
+        <build.jvmArguments>-Xms1024m -Xmx2048m</build.jvmArguments>
+        <build.main.class>com.rest.service.main.Main</build.main.class>
+        <proguard.version>2.0.13</proguard.version>
+    </properties>
+
+    <!-- 配置默认中央仓库 -->
+    <repositories>
+        <repository>
+            <id>central</id>
+            <name>Central</name>
+            <url>http://10.250.117.5:8081/nexus/content/groups/public</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+    <!--<pluginRepositories>
+        <pluginRepository>
+            <id>central</id>
+            <name>local private nexus</name>
+            <url>http://10.6.80.145:8088/nexus/content/groups/public</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>-->
+
+    <!-- 配置远程发布到私服，mvn deploy -->
+    <distributionManagement>
+        <!--<repository>
+            <id>nexus-releases</id>	&lt;!&ndash; 这里的id必须与setting.xml中配置server账号的id保持一致 &ndash;&gt;
+            <url>http://10.6.80.145:8088/nexus/content/repositories/releases/</url>
+        </repository>-->
+        <!--
+        <snapshotRepository>
+            <id>snapshots</id>
+            <url>http://10.6.80.145:8088/nexus/content/repositories/snapshots/</url>
+        </snapshotRepository> -->
+        <repository>
+            <id>thirdparty</id>
+            <url>http://10.250.117.5:8081/nexus/content/repositories/thirdparty</url>
+        </repository>
+    </distributionManagement>
+    <build>
+        <pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.2</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <showWarnings>true</showWarnings>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>**/*.xml</exclude>
+                        <exclude>**/*.properties</exclude>
+                        <exclude>**/*.cfg</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>com.github.wvengen</groupId>
+                <artifactId>proguard-maven-plugin</artifactId>
+                <version>${proguard.version}</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>proguard</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <obfuscate>true</obfuscate>
+                    <proguardInclude>${basedir}/proguard.cfg</proguardInclude>
+                    <!--<attach>true</attach>
+                    <attachArtifactClassifier>proguard</attachArtifactClassifier>-->
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>appassembler-maven-plugin</artifactId>
+                <version>1.8.1</version>
+                <executions>
+                    <execution>
+                        <id>generate-jsw-scripts</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>generate-daemons</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <configurationDirectory>conf</configurationDirectory>
+                    <repositoryLayout>flat</repositoryLayout>
+                    <includeConfigurationDirectoryInClasspath>true</includeConfigurationDirectoryInClasspath>
+                    <configurationSourceDirectory>src/main/resources</configurationSourceDirectory>
+                    <copyConfigurationDirectory>true</copyConfigurationDirectory>
+                    <assembleDirectory>${project.build.directory}/${project.artifactId}-${project.version}</assembleDirectory>
+                    <target>${project.build.directory}</target>
+                    <extraJvmArguments>${build.jvmArguments}</extraJvmArguments>
+                    <logsDirectory>logs</logsDirectory>
+                    <binFileExtensions>
+                        <unix>.sh</unix>
+                    </binFileExtensions>
+                    <daemons>
+                        <daemon>
+                            <id>${project.artifactId}</id>
+                            <mainClass>${build.main.class}</mainClass>
+                            <commandLineArguments>
+                                <commandLineArgument>start</commandLineArgument>
+                            </commandLineArguments>
+                            <platforms>
+                                <platform>jsw</platform>
+                            </platforms>
+                            <generatorConfigurations>
+                                <generatorConfiguration>
+                                    <generator>jsw</generator>
+                                    <includes>
+                                        <include>linux-x86-64</include>
+                                        <!--<include>linux-x86-32</include>
+                                        <include>windows-x86-32</include>
+                                        <include>windows-x86-64</include>-->
+                                    </includes>
+                                    <configuration>
+                                        <property>
+                                            <name>configuration.directory.in.classpath.first</name>
+                                            <value>conf</value>
+                                        </property>
+                                        <property>
+                                            <name>set.default.REPO_DIR</name>
+                                            <value>lib</value>
+                                        </property>
+                                        <property>
+                                            <name>wrapper.logfile</name>
+                                            <value>logs/wrapper-${project.artifactId}.log</value>
+                                        </property>
+                                        <property>
+                                            <name>wrapper.logfile.format</name>
+                                            <value>M</value>
+                                        </property>
+                                    </configuration>
+                                </generatorConfiguration>
+                            </generatorConfigurations>
+                        </daemon>
+                    </daemons>
+
+                    <repositoryName>lib</repositoryName>
+                </configuration>
+
+            </plugin>
+        </plugins>
+        </pluginManagement>
+    </build>
+</project>

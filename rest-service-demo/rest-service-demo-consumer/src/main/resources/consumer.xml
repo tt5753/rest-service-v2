@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://code.alibabatech.com/schema/dubbo
+       http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <!-- 消费方应用名，用于计算依赖关系，不是匹配条件，不要与提供方一样 -->
+    <dubbo:application name="rest-security-demo"  />
+
+    <!-- zookeeper注册中心 -->
+    <dubbo:registry address="zookeeper://10.6.80.145:2181" />
+    <dubbo:provider client="netty4" server="netty4" port="8090" />
+    <dubbo:consumer group="security-demo-liuzh" timeout="30000" />
+    <dubbo:annotation package="com.rest.service.resteasy, com.rest.service.security.simple, com.rest.service.demo"/>
+
+
+</beans>
