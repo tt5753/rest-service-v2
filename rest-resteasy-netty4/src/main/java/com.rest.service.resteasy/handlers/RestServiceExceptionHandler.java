@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
@@ -38,26 +39,26 @@ public class RestServiceExceptionHandler implements ExceptionMapper<Exception> {
             resultJsonStr = jsonMapper.toJson(resultMap);
             logger.error(exception.getMessage(), exception);
 
-            return Response.status(Response.Status.FORBIDDEN).entity(resultJsonStr).build();
+            return Response.status(Response.Status.FORBIDDEN).entity(resultJsonStr).type(MediaType.APPLICATION_JSON).build();
         }else if (exception instanceof AuthenticationException)
         {
             resultMap.put(ERROR_MSG, exception.getMessage());
             resultJsonStr = jsonMapper.toJson(resultMap);
             logger.error(exception.getMessage(), exception);
 
-            return Response.status(Response.Status.UNAUTHORIZED).entity(resultJsonStr).build();
+            return Response.status(Response.Status.UNAUTHORIZED).entity(resultJsonStr).type(MediaType.APPLICATION_JSON).build();
         } else if (exception instanceof ServiceException) {
             resultMap.put(ERROR_MSG, exception.getMessage());
             resultJsonStr = jsonMapper.toJson(resultMap);
             logger.error(exception.getMessage(), exception);
 
-            return Response.status(Response.Status.BAD_REQUEST).entity(resultJsonStr).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(resultJsonStr).type(MediaType.APPLICATION_JSON).build();
         } else if (exception instanceof NullPointerException) {
             resultMap.put(ERROR_MSG, "Null Pointer Exception");
             resultJsonStr = jsonMapper.toJson(resultMap);
             logger.error(exception.getMessage(), exception);
 
-            return Response.status(Response.Status.BAD_REQUEST).entity(resultJsonStr).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(resultJsonStr).type(MediaType.APPLICATION_JSON).build();
         } else if (exception instanceof DefaultOptionsMethodException) {
             /* 前端跨域请求 */
             return Response.ok().build();
@@ -67,6 +68,6 @@ public class RestServiceExceptionHandler implements ExceptionMapper<Exception> {
         resultJsonStr = jsonMapper.toJson(resultMap);
         logger.error(exception.getMessage(), exception);
 
-        return Response.status(Response.Status.BAD_REQUEST).entity(resultJsonStr).build();
+        return Response.status(Response.Status.BAD_REQUEST).entity(resultJsonStr).type(MediaType.APPLICATION_JSON).build();
     }
 }
