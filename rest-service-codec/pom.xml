@@ -14,7 +14,7 @@
         <dependency>
             <groupId>com.rest</groupId>
             <artifactId>rest-service-utils</artifactId>
-            <version>1.1.0</version>
+            <version>${rest.version}</version>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>

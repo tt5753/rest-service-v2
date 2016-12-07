@@ -1,10 +1,9 @@
 package com.rest.service.resteasy;
 
-import com.rest.service.resteasy.handlers.CorsHeadersChannelHandler;
 import com.rest.service.security.AnonPermission;
 import com.rest.service.security.SecurePermission;
-import com.rest.service.security.handler.AuthHandler;
-import io.netty.channel.ChannelHandler;
+import com.rest.service.security.interceptor.SecurityInterceptor;
+import org.jboss.resteasy.plugins.interceptors.CorsFilter;
 import org.jboss.resteasy.plugins.server.netty.NettyJaxrsServer;
 import org.jboss.resteasy.spi.ResteasyDeployment;
 import org.slf4j.Logger;
@@ -17,9 +16,8 @@ import org.springframework.util.Assert;
 
 import javax.annotation.PreDestroy;
 import javax.ws.rs.ext.Provider;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 @Component
 public class NettyServer {
@@ -32,11 +30,13 @@ public class NettyServer {
 
     int idleTimeout = -1;
 
+    boolean allowCredentials = true;
+
     int port = 8082;
 
     String allowOrigin = "*";
 
-    ConfigurableNettyJaxrsServer netty;
+    NettyJaxrsServer netty;
 
     SecurePermission securePermission;
 
@@ -55,20 +55,45 @@ public class NettyServer {
         if (providers != null) {
             dp.getProviders().addAll(providers);
         }
+        setInterceptor(dp);
+
+        Assert.notNull(securePermission, "The secure permission implement class is not set.");
+        Assert.notNull(anonPermission, "The anonymous permission implement class is not set.");
+
         // extract only controller annotated beans
         dp.getResources().addAll(controllers);
 
-        netty = new ConfigurableNettyJaxrsServer();
+        netty = new NettyJaxrsServer();
         netty.setDeployment(dp);
         netty.setPort(port);
         netty.setIdleTimeout(idleTimeout);
         netty.setRootResourcePath(rootResourcePath);
         netty.setSecurityDomain(null);
-        netty.setAllowOrigin(allowOrigin);
-        netty.setSecurePermission(securePermission);
-        netty.setAnonPermission(anonPermission);
         netty.start();
 
+        logger.info("The server start on hostname:{}, port:{}, idleTimeout:{}, allowOrigin:{}, allowCredentials:{}, rootResourcePath:{}",
+                ((netty.getHostname() == null) ? "127.0.0.1" : netty.getHostname()),
+                netty.getPort(),
+                getIdleTimeout(),
+                allowOrigin, allowCredentials,
+                rootResourcePath);
+    }
+
+    private void setInterceptor(ResteasyDeployment dp) {
+        CorsFilter filter = new CorsFilter();
+
+        filter.setAllowedMethods("GET,POST,PUT,DELETE,OPTIONS");
+        filter.setAllowedHeaders("X-Requested-With, Authorization, Content-Type, Content-Length");
+        filter.setAllowCredentials(allowCredentials);
+        filter.getAllowedOrigins().addAll(Arrays.asList(allowOrigin.split(",")));
+        dp.getProviders().add(filter);
+
+        SecurityInterceptor interceptor = new SecurityInterceptor();
+
+        interceptor.setSecurePermission(securePermission);
+        interceptor.setAnonPermission(anonPermission);
+
+        dp.getProviders().add(interceptor);
     }
 
     @PreDestroy
@@ -90,6 +115,14 @@ public class NettyServer {
 
     public int getIdleTimeout() {
         return idleTimeout;
+    }
+
+    public boolean isAllowCredentials() {
+        return allowCredentials;
+    }
+
+    public void setAllowCredentials(boolean allowCredentials) {
+        this.allowCredentials = allowCredentials;
     }
 
     public void setIdleTimeout(int idleTimeout) {

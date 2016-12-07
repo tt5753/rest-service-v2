@@ -14,7 +14,7 @@
         <dependency>
             <groupId>com.rest</groupId>
             <artifactId>rest-service-demo-api</artifactId>
-            <version>1.0</version>
+            <version>${rest.version}</version>
         </dependency>
     </dependencies>
 

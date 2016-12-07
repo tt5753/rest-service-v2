@@ -35,13 +35,13 @@ public class Main {
                     FileInputStream in = new FileInputStream(file);
                     pro.load(in);
                     in.close();
-                    System.out.println("加载系统重要文件rest.cfg..."+pro.stringPropertyNames());
-                    logger.info("加载系统重要文件rest.cfg..."+pro.stringPropertyNames());
+                    System.out.println("加载系统配置文件rest.cfg..."+pro.stringPropertyNames());
+                    logger.info("加载系统配置文件rest.cfg..."+pro.stringPropertyNames());
                 }
             }catch (Exception e){
                 e.printStackTrace();
-                System.out.println("系统重要文件rest.cfg遭到恶意破坏 ." +e.getMessage());
-                logger.info("系统重要文件rest.cfg遭到恶意破坏",e);
+                System.out.println("系统配置文件rest.cfg遭到恶意破坏 ." +e.getMessage());
+                logger.info("系统配置文件rest.cfg遭到恶意破坏",e);
             }
 
             String xmlAC="root-context.xml",securePermission="authSecurity",anonPermission="anonAuthSecurity";
@@ -67,6 +67,11 @@ public class Main {
             if (pro.containsKey("port") && pro.getProperty("port")!=null && pro.getProperty("port")!="") {
                 int port = Integer.parseInt(pro.getProperty("port"));
                 netty.setPort(port);
+            }
+
+            if (pro.containsKey("allowCredentials") && pro.getProperty("allowCredentials")!=null && pro.getProperty("allowCredentials")!="") {
+                boolean allowCredentials = Boolean.getBoolean(pro.getProperty("allowCredentials"));
+                netty.setAllowCredentials(allowCredentials);
             }
 
             if (pro.containsKey("idleTimeout") && pro.getProperty("idleTimeout")!=null && pro.getProperty("idleTimeout")!="") {
