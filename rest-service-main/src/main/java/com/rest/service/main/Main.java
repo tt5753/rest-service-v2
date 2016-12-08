@@ -64,26 +64,26 @@ public class Main {
             netty.setAnonPermission((AnonPermission) ac.getBean(anonPermission));
 
 
-            if (pro.containsKey("port") && pro.getProperty("port")!=null && pro.getProperty("port")!="") {
+            if (pro.containsKey("port") && pro.getProperty("port")!=null && pro.getProperty("port").equals("")) {
                 int port = Integer.parseInt(pro.getProperty("port"));
                 netty.setPort(port);
             }
 
-            if (pro.containsKey("allowCredentials") && pro.getProperty("allowCredentials")!=null && pro.getProperty("allowCredentials")!="") {
+            if (pro.containsKey("allowCredentials") && pro.getProperty("allowCredentials")!=null && pro.getProperty("allowCredentials").equals("")) {
                 boolean allowCredentials = Boolean.getBoolean(pro.getProperty("allowCredentials"));
                 netty.setAllowCredentials(allowCredentials);
             }
 
-            if (pro.containsKey("idleTimeout") && pro.getProperty("idleTimeout")!=null && pro.getProperty("idleTimeout")!="") {
+            if (pro.containsKey("idleTimeout") && pro.getProperty("idleTimeout")!=null && pro.getProperty("idleTimeout").equals("")) {
                 int idleTimeout = Integer.parseInt(pro.getProperty("idleTimeout"));
                 netty.setIdleTimeout(idleTimeout);
             }
 
-            if (pro.containsKey("rootResourcePath") && pro.getProperty("rootResourcePath")!=null && pro.getProperty("rootResourcePath")!="") {
+            if (pro.containsKey("rootResourcePath") && pro.getProperty("rootResourcePath")!=null && pro.getProperty("rootResourcePath").equals("")) {
                 netty.setRootResourcePath(pro.getProperty("rootResourcePath"));
             }
 
-            if (pro.containsKey("allowOrigin") && pro.getProperty("allowOrigin")!=null && pro.getProperty("allowOrigin")!="") {
+            if (pro.containsKey("allowOrigin") && pro.getProperty("allowOrigin")!=null && pro.getProperty("allowOrigin").equals("")) {
                 netty.setAllowOrigin(pro.getProperty("allowOrigin"));
             }
 
