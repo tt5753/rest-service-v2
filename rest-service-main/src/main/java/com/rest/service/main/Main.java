@@ -10,6 +10,7 @@ import org.springframework.util.Assert;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
@@ -27,7 +28,8 @@ public class Main {
         try {
             Properties pro = new Properties();
             try {
-                Path path = Paths.get(Main.class.getResource("/rest.cfg").getPath());
+                URL url = Main.class.getClass().getResource("/rest.cfg");
+                Path path = Paths.get(url.toURI());
                 File file = path.toFile();
                 if (file.exists() && file.isFile()) {
                     FileInputStream in = new FileInputStream(file);
@@ -37,7 +39,6 @@ public class Main {
                 }
             }catch (Exception e){
                 logger.error("系统配置文件加载错误.",e);
-                e.printStackTrace();
             }
 
             String xmlAC="root-context.xml",securePermission="authSecurity",anonPermission="anonAuthSecurity";
