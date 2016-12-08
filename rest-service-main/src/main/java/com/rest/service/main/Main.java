@@ -41,13 +41,13 @@ public class Main {
             }
 
             String xmlAC="root-context.xml",securePermission="authSecurity",anonPermission="anonAuthSecurity";
-            if (pro.containsKey("xmlAC") && pro.getProperty("xmlAC")!=null && pro.getProperty("xmlAC").equals("")) {
+            if (pro.containsKey("xmlAC") && pro.getProperty("xmlAC")!=null && !pro.getProperty("xmlAC").equals("")) {
                 xmlAC = pro.getProperty("xmlAC");
             }
-            if (pro.containsKey("securePermission") && pro.getProperty("securePermission")!=null && pro.getProperty("securePermission").equals("")) {
+            if (pro.containsKey("securePermission") && pro.getProperty("securePermission")!=null && !pro.getProperty("securePermission").equals("")) {
                 securePermission = pro.getProperty("securePermission");
             }
-            if (pro.containsKey("anonPermission") && pro.getProperty("anonPermission")!=null && pro.getProperty("anonPermission").equals("")) {
+            if (pro.containsKey("anonPermission") && pro.getProperty("anonPermission")!=null && !pro.getProperty("anonPermission").equals("")) {
                 anonPermission = pro.getProperty("anonPermission");
             }
 
@@ -60,26 +60,26 @@ public class Main {
             netty.setAnonPermission((AnonPermission) ac.getBean(anonPermission));
 
 
-            if (pro.containsKey("port") && pro.getProperty("port")!=null && pro.getProperty("port").equals("")) {
+            if (pro.containsKey("port") && pro.getProperty("port")!=null && !pro.getProperty("port").equals("")) {
                 int port = Integer.parseInt(pro.getProperty("port"));
                 netty.setPort(port);
             }
 
-            if (pro.containsKey("allowCredentials") && pro.getProperty("allowCredentials")!=null && pro.getProperty("allowCredentials").equals("")) {
+            if (pro.containsKey("allowCredentials") && pro.getProperty("allowCredentials")!=null && !pro.getProperty("allowCredentials").equals("")) {
                 boolean allowCredentials = Boolean.getBoolean(pro.getProperty("allowCredentials"));
                 netty.setAllowCredentials(allowCredentials);
             }
 
-            if (pro.containsKey("idleTimeout") && pro.getProperty("idleTimeout")!=null && pro.getProperty("idleTimeout").equals("")) {
+            if (pro.containsKey("idleTimeout") && pro.getProperty("idleTimeout")!=null && !pro.getProperty("idleTimeout").equals("")) {
                 int idleTimeout = Integer.parseInt(pro.getProperty("idleTimeout"));
                 netty.setIdleTimeout(idleTimeout);
             }
 
-            if (pro.containsKey("rootResourcePath") && pro.getProperty("rootResourcePath")!=null && pro.getProperty("rootResourcePath").equals("")) {
+            if (pro.containsKey("rootResourcePath") && pro.getProperty("rootResourcePath")!=null && !pro.getProperty("rootResourcePath").equals("")) {
                 netty.setRootResourcePath(pro.getProperty("rootResourcePath"));
             }
 
-            if (pro.containsKey("allowOrigin") && pro.getProperty("allowOrigin")!=null && pro.getProperty("allowOrigin").equals("")) {
+            if (pro.containsKey("allowOrigin") && pro.getProperty("allowOrigin")!=null && !pro.getProperty("allowOrigin").equals("")) {
                 netty.setAllowOrigin(pro.getProperty("allowOrigin"));
             }
 
