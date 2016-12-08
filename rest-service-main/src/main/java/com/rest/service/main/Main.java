@@ -10,8 +10,6 @@ import org.springframework.util.Assert;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
@@ -35,23 +33,21 @@ public class Main {
                     FileInputStream in = new FileInputStream(file);
                     pro.load(in);
                     in.close();
-                    System.out.println("加载系统配置文件rest.cfg..."+pro.stringPropertyNames());
-                    logger.info("加载系统配置文件rest.cfg..."+pro.stringPropertyNames());
+                    logger.info("加载系统配置文件rest.cfg...{}", pro.stringPropertyNames());
                 }
             }catch (Exception e){
+                logger.error("系统配置文件rest.cfg遭到恶意破坏",e);
                 e.printStackTrace();
-                System.out.println("系统配置文件rest.cfg遭到恶意破坏 ." +e.getMessage());
-                logger.info("系统配置文件rest.cfg遭到恶意破坏",e);
             }
 
             String xmlAC="root-context.xml",securePermission="authSecurity",anonPermission="anonAuthSecurity";
-            if (pro.containsKey("xmlAC") && pro.getProperty("xmlAC")!=null && pro.getProperty("xmlAC")!="") {
+            if (pro.containsKey("xmlAC") && pro.getProperty("xmlAC")!=null && pro.getProperty("xmlAC").equals("")) {
                 xmlAC = pro.getProperty("xmlAC");
             }
-            if (pro.containsKey("securePermission") && pro.getProperty("securePermission")!=null && pro.getProperty("securePermission")!="") {
+            if (pro.containsKey("securePermission") && pro.getProperty("securePermission")!=null && pro.getProperty("securePermission").equals("")) {
                 securePermission = pro.getProperty("securePermission");
             }
-            if (pro.containsKey("anonPermission") && pro.getProperty("anonPermission")!=null && pro.getProperty("anonPermission")!="") {
+            if (pro.containsKey("anonPermission") && pro.getProperty("anonPermission")!=null && pro.getProperty("anonPermission").equals("")) {
                 anonPermission = pro.getProperty("anonPermission");
             }
 
@@ -92,7 +88,7 @@ public class Main {
                     try {
                         netty.cleanUp();
 
-                        logger.info("Rest service server " + netty.getClass().getSimpleName() + " stopped!");
+                        logger.info("Rest service server {} stopped!", netty.getClass().getSimpleName());
                     } catch (Throwable t) {
                         logger.error(t.getMessage(), t);
                     }
