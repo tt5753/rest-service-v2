@@ -36,7 +36,7 @@ public class Main {
                     logger.info("加载系统配置文件rest.cfg...{}", pro.stringPropertyNames());
                 }
             }catch (Exception e){
-                logger.error("系统配置文件rest.cfg遭到恶意破坏",e);
+                logger.error("系统配置文件加载错误.",e);
                 e.printStackTrace();
             }
 
