@@ -67,7 +67,7 @@ public class Main {
             }
 
             if (pro.containsKey("allowCredentials") && pro.getProperty("allowCredentials")!=null && !pro.getProperty("allowCredentials").equals("")) {
-                boolean allowCredentials = Boolean.getBoolean(pro.getProperty("allowCredentials"));
+                boolean allowCredentials = Boolean.valueOf(pro.getProperty("allowCredentials"));
                 netty.setAllowCredentials(allowCredentials);
             }
 
