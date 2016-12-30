@@ -84,6 +84,14 @@ public class Main {
                 netty.setAllowOrigin(pro.getProperty("allowOrigin"));
             }
 
+            if (pro.containsKey("allowedMethods") && pro.getProperty("allowedMethods")!=null && !pro.getProperty("allowedMethods").equals("")) {
+                netty.setAllowedMethods(pro.getProperty("allowedMethods"));
+            }
+
+            if (pro.containsKey("allowedHeaders") && pro.getProperty("allowedHeaders")!=null && !pro.getProperty("allowedHeaders").equals("")) {
+                netty.setAllowedHeaders(pro.getProperty("allowedHeaders"));
+            }
+
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 public void run() {
                     try {

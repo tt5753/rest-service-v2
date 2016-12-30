@@ -34,6 +34,10 @@ public class NettyServer {
 
     int port = 8082;
 
+    String allowedHeaders = "X-Requested-With, Authorization, Content-Type, Content-Length";
+
+    String allowedMethods = "GET,POST,PUT,DELETE,OPTIONS";
+
     String allowOrigin = "*";
 
     NettyJaxrsServer netty;
@@ -71,10 +75,11 @@ public class NettyServer {
         netty.setSecurityDomain(null);
         netty.start();
 
-        logger.info("The server start on hostname:{}, port:{}, idleTimeout:{}, allowOrigin:{}, allowCredentials:{}, rootResourcePath:{}",
+        logger.info("The server start on hostname[{}], port[{}], idleTimeout[{}], allowedHeaders[{}], allowedMethods[{}], allowOrigin[{}], allowCredentials[{}], rootResourcePath[{}]",
                 ((netty.getHostname() == null) ? "127.0.0.1" : netty.getHostname()),
                 netty.getPort(),
                 getIdleTimeout(),
+                allowedHeaders, allowedMethods,
                 allowOrigin, allowCredentials,
                 rootResourcePath);
     }
@@ -82,8 +87,8 @@ public class NettyServer {
     private void setInterceptor(ResteasyDeployment dp) {
         CorsFilter filter = new CorsFilter();
 
-        filter.setAllowedMethods("GET,POST,PUT,DELETE,OPTIONS");
-        filter.setAllowedHeaders("X-Requested-With, Authorization, Content-Type, Content-Length");
+        filter.setAllowedMethods(allowedMethods);
+        filter.setAllowedHeaders(allowedHeaders);
         filter.setAllowCredentials(allowCredentials);
         filter.getAllowedOrigins().addAll(Arrays.asList(allowOrigin.split(",")));
         dp.getProviders().add(filter);
@@ -115,6 +120,22 @@ public class NettyServer {
 
     public int getIdleTimeout() {
         return idleTimeout;
+    }
+
+    public String getAllowedHeaders() {
+        return allowedHeaders;
+    }
+
+    public void setAllowedHeaders(String allowedHeaders) {
+        this.allowedHeaders = allowedHeaders;
+    }
+
+    public String getAllowedMethods() {
+        return allowedMethods;
+    }
+
+    public void setAllowedMethods(String allowedMethods) {
+        this.allowedMethods = allowedMethods;
     }
 
     public boolean isAllowCredentials() {
