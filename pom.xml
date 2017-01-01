@@ -133,7 +133,7 @@
         </dependencies>
     </dependencyManagement>
     <!-- 配置默认中央仓库 -->
-    <!--<repositories>
+    <repositories>
         <repository>
             <id>central</id>
             <name>Central</name>
@@ -145,7 +145,7 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
-    </repositories>-->
+    </repositories>
     <!--<pluginRepositories>
         <pluginRepository>
             <id>central</id>
