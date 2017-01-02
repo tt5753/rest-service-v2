@@ -84,6 +84,15 @@ public class Main {
                 netty.setAllowOrigin(pro.getProperty("allowOrigin"));
             }
 
+            if (pro.containsKey("corsMaxAge") && pro.getProperty("corsMaxAge")!=null && !pro.getProperty("corsMaxAge").equals("")) {
+                String[] tmp = pro.getProperty("corsMaxAge").split("\\*");
+                int maxAge = -1;
+                for (String str: tmp){
+                    maxAge = Math.abs(maxAge) * Integer.parseInt(str);
+                }
+                netty.setCorsMaxAge(maxAge);
+            }
+
             if (pro.containsKey("allowedMethods") && pro.getProperty("allowedMethods")!=null && !pro.getProperty("allowedMethods").equals("")) {
                 netty.setAllowedMethods(pro.getProperty("allowedMethods"));
             }

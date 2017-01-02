@@ -40,6 +40,8 @@ public class NettyServer {
 
     String allowOrigin = "*";
 
+    int corsMaxAge = -1;
+
     NettyJaxrsServer netty;
 
     SecurePermission securePermission;
@@ -75,12 +77,12 @@ public class NettyServer {
         netty.setSecurityDomain(null);
         netty.start();
 
-        logger.info("The server start on hostname[{}], port[{}], idleTimeout[{}], allowedHeaders[{}], allowedMethods[{}], allowOrigin[{}], allowCredentials[{}], rootResourcePath[{}]",
+        logger.info("The server start on hostname[{}], port[{}], idleTimeout[{}], allowedHeaders[{}], allowedMethods[{}], allowOrigin[{}], corsMaxAge[{}], allowCredentials[{}], rootResourcePath[{}]",
                 ((netty.getHostname() == null) ? "127.0.0.1" : netty.getHostname()),
                 netty.getPort(),
                 getIdleTimeout(),
                 allowedHeaders, allowedMethods,
-                allowOrigin, allowCredentials,
+                allowOrigin, corsMaxAge, allowCredentials,
                 rootResourcePath);
     }
 
@@ -90,6 +92,7 @@ public class NettyServer {
         filter.setAllowedMethods(allowedMethods);
         filter.setAllowedHeaders(allowedHeaders);
         filter.setAllowCredentials(allowCredentials);
+        filter.setCorsMaxAge(corsMaxAge);
         filter.getAllowedOrigins().addAll(Arrays.asList(allowOrigin.split(",")));
         dp.getProviders().add(filter);
 
@@ -156,6 +159,10 @@ public class NettyServer {
 
     public void setAllowOrigin(String allowOrigin) {
         this.allowOrigin = allowOrigin;
+    }
+
+    public void setCorsMaxAge(int corsMaxAge) {
+        this.corsMaxAge = corsMaxAge;
     }
 
     public void setSecurePermission(SecurePermission securePermission) {
