@@ -66,6 +66,25 @@ public class Main {
                 netty.setPort(port);
             }
 
+            if (pro.containsKey("useHttps") && pro.getProperty("useHttps")!=null && !pro.getProperty("useHttps").equals("")) {
+                boolean useHttps = Boolean.valueOf(pro.getProperty("useHttps"));
+                netty.setUseHttps(useHttps);
+            }
+
+            if (pro.containsKey("keystoreFile") && pro.getProperty("keystoreFile")!=null && !pro.getProperty("keystoreFile").equals("")) {
+                String keystoreFile = pro.getProperty("keystoreFile");
+
+                if(!keystoreFile.startsWith("/"))
+                    keystoreFile = "/" + keystoreFile;
+
+                netty.setKeystoreFile(keystoreFile);
+            }
+
+            if (pro.containsKey("keystorePassword") && pro.getProperty("keystorePassword")!=null && !pro.getProperty("keystorePassword").equals("")) {
+                String keystorePassword = pro.getProperty("keystorePassword");
+                netty.setKeystorePassword(keystorePassword);
+            }
+
             if (pro.containsKey("allowCredentials") && pro.getProperty("allowCredentials")!=null && !pro.getProperty("allowCredentials").equals("")) {
                 boolean allowCredentials = Boolean.valueOf(pro.getProperty("allowCredentials"));
                 netty.setAllowCredentials(allowCredentials);

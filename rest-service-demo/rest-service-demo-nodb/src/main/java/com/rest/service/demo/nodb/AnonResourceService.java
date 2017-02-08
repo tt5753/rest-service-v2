@@ -20,6 +20,7 @@ public class AnonResourceService implements SimpleAnonResource {
     public List<String> listResources() throws ServiceException {
         List<String> list = new ArrayList<>();
 
+        list.add("/auth/login/*");
         list.add("/auth/login");
         logger.info("it is AnonResourceService listResources");
 

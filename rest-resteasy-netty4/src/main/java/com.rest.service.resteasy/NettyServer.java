@@ -5,6 +5,7 @@ import com.rest.service.security.SecurePermission;
 import com.rest.service.security.interceptor.SecurityInterceptor;
 import org.jboss.resteasy.plugins.interceptors.CorsFilter;
 import org.jboss.resteasy.plugins.server.netty.NettyJaxrsServer;
+import org.jboss.resteasy.plugins.server.netty.SniConfiguration;
 import org.jboss.resteasy.spi.ResteasyDeployment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,9 +16,20 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
 
 import javax.annotation.PreDestroy;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
 import javax.ws.rs.ext.Provider;
+import java.io.File;
+import java.io.FileInputStream;
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.security.KeyStore;
 import java.util.Arrays;
 import java.util.Collection;
+
+import static org.jboss.resteasy.plugins.server.netty.RestEasyHttpRequestDecoder.Protocol.HTTP;
+import static org.jboss.resteasy.plugins.server.netty.RestEasyHttpRequestDecoder.Protocol.HTTPS;
 
 @Component
 public class NettyServer {
@@ -41,6 +53,12 @@ public class NettyServer {
     String allowOrigin = "*";
 
     int corsMaxAge = -1;
+
+    boolean useHttps = false;
+
+    String keystoreFile;
+
+    String keystorePassword;
 
     NettyJaxrsServer netty;
 
@@ -70,6 +88,9 @@ public class NettyServer {
         dp.getResources().addAll(controllers);
 
         netty = new NettyJaxrsServer();
+        if(useHttps) {
+            initSniConfiguration();
+        }
         netty.setDeployment(dp);
         netty.setPort(port);
         netty.setIdleTimeout(idleTimeout);
@@ -77,7 +98,8 @@ public class NettyServer {
         netty.setSecurityDomain(null);
         netty.start();
 
-        logger.info("The server start on hostname[{}], port[{}], idleTimeout[{}], allowedHeaders[{}], allowedMethods[{}], allowOrigin[{}], corsMaxAge[{}], allowCredentials[{}], rootResourcePath[{}]",
+        logger.info("The server start on url.Scheme[{}], hostname[{}], port[{}], idleTimeout[{}], allowedHeaders[{}], allowedMethods[{}], allowOrigin[{}], corsMaxAge[{}], allowCredentials[{}], rootResourcePath[{}]",
+                useHttps ? HTTPS : HTTP,
                 ((netty.getHostname() == null) ? "127.0.0.1" : netty.getHostname()),
                 netty.getPort(),
                 getIdleTimeout(),
@@ -102,6 +124,29 @@ public class NettyServer {
         interceptor.setAnonPermission(anonPermission);
 
         dp.getProviders().add(interceptor);
+    }
+
+    private void initSniConfiguration() {
+        try {
+            Assert.notNull(keystoreFile, "The keystore File is not set.");
+            Assert.notNull(keystorePassword, "The keystore Password is not set.");
+
+            URL url = getClass().getResource(keystoreFile);
+            Path path = Paths.get(url.toURI());
+            File file = path.toFile();
+            KeyStore keyStore = KeyStore.getInstance("JKS");
+            keyStore.load(new FileInputStream(file), keystorePassword.toCharArray());
+            KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+            keyManagerFactory.init(keyStore, keystorePassword.toCharArray());
+
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(keyManagerFactory.getKeyManagers(), null, null);
+
+            SniConfiguration sniConfiguration = new SniConfiguration(sslContext);
+            netty.setSniConfiguration(sniConfiguration);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
     }
 
     @PreDestroy
@@ -139,6 +184,30 @@ public class NettyServer {
 
     public void setAllowedMethods(String allowedMethods) {
         this.allowedMethods = allowedMethods;
+    }
+
+    public boolean isUseHttps() {
+        return useHttps;
+    }
+
+    public void setUseHttps(boolean useHttps) {
+        this.useHttps = useHttps;
+    }
+
+    public String getKeystoreFile() {
+        return keystoreFile;
+    }
+
+    public void setKeystoreFile(String keystoreFile) {
+        this.keystoreFile = keystoreFile;
+    }
+
+    public String getKeystorePassword() {
+        return keystorePassword;
+    }
+
+    public void setKeystorePassword(String keystorePassword) {
+        this.keystorePassword = keystorePassword;
     }
 
     public boolean isAllowCredentials() {

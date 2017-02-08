@@ -29,6 +29,23 @@ public class LoginController extends AbstractController {
         return user;
     }
 
+    @GET
+    @Path("/login/{name}")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public User getLogin(@PathParam("name") String name) throws ServiceException {
+
+        name = name + "testing";
+
+        logger.info(name);
+
+        User user = new User();
+
+        user.setUsername(name);
+
+        return user;
+    }
+
     @POST
     @Path("/hello")
     @Consumes({MediaType.APPLICATION_JSON})
